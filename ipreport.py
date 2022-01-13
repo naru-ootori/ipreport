@@ -128,7 +128,6 @@ def table_format(table):
             for run in par.runs:
                 run.font.bold = True
 
-final_document = get_orginfo()[3] + '.docx'
 
 document = prepare_document()
 
@@ -152,11 +151,14 @@ for i in range(0, table_size):
 
 table_format(table)
 
+parent_dir = str(Path(sys.argv[1]).parent)
+final_document = parent_dir + '\\' + get_orginfo()[3] + '.docx'
+
 try:
     document.save(final_document)
 except OSError as error_message:
     print("Error: {0} - {1}.".format(error_message.filename,
-                                     error_message.strerror))
+                                    error_message.strerror))
 
 args = ['explorer', final_document]
 Popen(args)
