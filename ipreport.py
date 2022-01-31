@@ -34,23 +34,22 @@ def get_orginfo():
   
 def prepare_template():
 
-    orginfo = get_orginfo()
-    inn     = orginfo[0]
-    kpp     = orginfo[1]
-    orgname = orginfo[2]
-    start_date  = (datetime.date.today() - datetime.timedelta(days=365)). \
-                                                   strftime('%d.%m.%Y')
-    end_date    = datetime.date.today().strftime('%d.%m.%Y')
+    orginfo    = get_orginfo()
+    inn        = orginfo[0]
+    kpp        = orginfo[1]
+    orgname    = orginfo[2]
+#   start_date = (datetime.date.today() - datetime.timedelta(days=365)). \
+#                                                  strftime('%d.%m.%Y')
+    start_date = '20.12.2021'  
+    end_date   = datetime.date.today().strftime('%d.%m.%Y')
 
     with open('template.txt', 'r', encoding="utf-8") as template:
         template_text = template.readlines()
 
     paragraph_0 = template_text[0].replace('\n', '')
+    paragraph_0 = paragraph_0.format(orgname, inn)
     paragraph_1 = template_text[1].replace('\n', '')
     paragraph_2 = template_text[2].replace('\n', '')
-
-    
-    paragraph_0 = paragraph_0.format(orgname, inn)
     paragraph_2 = paragraph_2.format(start_date, end_date)
     
     return([paragraph_0, paragraph_1, paragraph_2])
@@ -128,7 +127,6 @@ def table_format(table):
             for run in par.runs:
                 run.font.bold = True
 
-
 document = prepare_document()
 
 data = prepare_data()
@@ -156,6 +154,7 @@ final_document = parent_dir + '\\' + get_orginfo()[3] + '.docx'
 
 try:
     document.save(final_document)
+    
 except OSError as error_message:
     print("Error: {0} - {1}.".format(error_message.filename,
                                     error_message.strerror))
