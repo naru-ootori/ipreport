@@ -1,5 +1,5 @@
 # coding=utf-8
-'''Power BI to docx report converter'''
+"""Power BI to docx report converter"""
 
 import sys
 import datetime
@@ -7,37 +7,40 @@ from openpyxl import load_workbook
 from pathlib import Path
 from subprocess import Popen
 
-from docx.enum.text import  WD_ALIGN_PARAGRAPH, WD_LINE_SPACING \
-                             # pylint: disable=E0611
+from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_LINE_SPACING \
+                           # pylint: disable=E0611
 
 from docx.enum.table import WD_TABLE_ALIGNMENT, WD_ALIGN_VERTICAL, \
-                            WD_ROW_HEIGHT_RULE # pylint: disable=E0611
+                            WD_ROW_HEIGHT_RULE  # pylint: disable=E0611
                             
 from docx import Document
 from docx.shared import Cm, Pt
 
+
 def load_sheet():
 
     xlsx_file = Path(sys.argv[1])
-    wb_obj    = load_workbook(xlsx_file)
-    sheet     = wb_obj.active
+    wb_obj = load_workbook(xlsx_file)
+    sheet = wb_obj.active
     return(sheet)    
+
 
 def get_orginfo():
 
-    sheet   = load_sheet()
-    inn     = sheet['A4'].value
-    kpp     = sheet['B4'].value
+    sheet = load_sheet()
+    inn = sheet['A4'].value
+    kpp = sheet['B4'].value
     orgname = sheet['C4'].value.split(sep=' ', maxsplit=1)[1]
     rawname = orgname.translate(str.maketrans('', '','.«»\'\"'))
-    return([inn, kpp, orgname, rawname])
-  
+    return [inn, kpp, orgname, rawname]
+
+
 def prepare_template():
 
-    orginfo    = get_orginfo()
-    inn        = orginfo[0]
-    kpp        = orginfo[1]
-    orgname    = orginfo[2]
+    orginfo = get_orginfo()
+    inn = orginfo[0]
+    kpp = orginfo[1]
+    orgname = orginfo[2]
 #   start_date = (datetime.date.today() - datetime.timedelta(days=365)). \
 #                                                  strftime('%d.%m.%Y')
     start_date = '20.12.2021'  
@@ -53,7 +56,8 @@ def prepare_template():
     paragraph_2 = paragraph_2.format(start_date, end_date)
     
     return([paragraph_0, paragraph_1, paragraph_2])
-    
+
+
 def prepare_document():
 
         document = Document('template.docx')
@@ -81,6 +85,7 @@ def prepare_document():
                 
         return(document)
 
+
 def prepare_data():
 
     sheet    = load_sheet()
@@ -95,7 +100,8 @@ def prepare_data():
         i[0] = datetime.datetime.strftime(i[0], '%d.%m.%Y, %H:%M:%S')
 
     return(data_table, len(data_table))
-    
+
+
 def table_format(table):
     '''Apply styles to various table elements'''
 
@@ -157,7 +163,7 @@ try:
     
 except OSError as error_message:
     print("Error: {0} - {1}.".format(error_message.filename,
-                                    error_message.strerror))
+                                     error_message.strerror))
 
 args = ['explorer', final_document]
 Popen(args)
